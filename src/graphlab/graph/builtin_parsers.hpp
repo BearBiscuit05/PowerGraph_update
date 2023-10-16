@@ -95,6 +95,21 @@ namespace graphlab {
       return true;
     } // end of tsv parser
 
+    template <typename Graph>
+    bool self_tsv_parser(Graph& graph, const std::string& srcfilename,
+                    const std::string& str) {
+      if (str.empty()) return true;
+      size_t source, target,partid;
+      char* targetptr;
+      char* partidptr;
+      source = strtoul(str.c_str(), &targetptr, 10);
+      if (targetptr == NULL) return false;
+      target = strtoul(targetptr, &partidptr, 10);
+      partid = strtoul(partidptr, NULL, 10);
+      //std::cout << "src :" << source << " -> dst :" << target << " partid:" << partid << std::endl;
+      if(source != target) graph.add_edge_and_partid(source, target, partid);
+      return true;
+    } // end of tsv parser
 
     template <typename Graph>
     bool csv_parser(Graph& graph, 

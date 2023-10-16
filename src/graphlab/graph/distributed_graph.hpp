@@ -901,6 +901,48 @@ namespace graphlab {
       return true;
     }
 
+    bool add_edge_and_partid(vertex_id_type source, vertex_id_type target,size_t partid,
+                  const EdgeData& edata = EdgeData()) {
+#ifndef USE_DYNAMIC_LOCAL_GRAPH
+      if(finalized) {
+        logstream(LOG_FATAL)
+          << "\n\tAttempting to add an edge to a finalized graph."
+          << "\n\tEdges cannot be added to a graph after finalization."
+          << std::endl;
+      }
+#else 
+      finalized = false;
+#endif
+      if(source == vertex_id_type(-1)) {
+        logstream(LOG_ERROR)
+          << "\n\tThe source vertex with id vertex_id_type(-1)\n"
+          << "\tor unsigned value " << vertex_id_type(-1) << " in edge \n"
+          << "\t(" << source << "->" << target << ") is not allowed.\n"
+          << "\tThe -1 vertex id is reserved for internal use."
+          << std::endl;
+        return false;
+      }
+      if(target == vertex_id_type(-1)) {
+        logstream(LOG_ERROR)
+          << "\n\tThe target vertex with id vertex_id_type(-1)\n"
+          << "\tor unsigned value " << vertex_id_type(-1) << " in edge \n"
+          << "\t(" << source << "->" << target << ") is not allowed.\n"
+          << "\tThe -1 vertex id is reserved for internal use."
+          << std::endl;
+        return false;
+      }
+      if(source == target) {
+        logstream(LOG_ERROR)
+          << "\n\tTrying to add self edge (" << source << "->" << target << ")."
+          << "\n\tSelf edges are not allowed."
+          << std::endl;
+        return false;
+      }
+      ASSERT_NE(ingress_ptr, NULL);
+      // std::cout << "machine :"<< rpc.procid() << " , add_edge and part... :" << source << " -> " << target << " partid: "<< partid << std::endl;
+      ingress_ptr->add_edge_and_partid(source, target, partid ,edata);
+      return true;
+    }
 
    /**
     * \brief Performs a map-reduce operation on each vertex in the
@@ -2439,6 +2481,9 @@ namespace graphlab {
          load_direct(path,&graph_type::load_bintsv4_from_stream);
       } else if (format == "bin") {
          load_binary(path);
+      } else if (format == "self_tsv") {
+        line_parser = builtin_parsers::self_tsv_parser<distributed_graph>;
+        load(path, line_parser);
       } else {
         logstream(LOG_ERROR)
           << "Unrecognized Format \"" << format << "\"!" << std::endl;

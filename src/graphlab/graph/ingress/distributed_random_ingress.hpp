@@ -24,12 +24,12 @@
 #define GRAPHLAB_DISTRIBUTED_RANDOM_INGRESS_HPP
 
 #include <boost/functional/hash.hpp>
-
+#include <iostream>
 #include <graphlab/rpc/buffered_exchange.hpp>
 #include <graphlab/graph/graph_basic_types.hpp>
 #include <graphlab/graph/ingress/distributed_ingress_base.hpp>
 #include <graphlab/graph/distributed_graph.hpp>
-
+// #include <cstdint>
 
 #include <graphlab/macros_def.hpp>
 namespace graphlab {
@@ -64,6 +64,14 @@ namespace graphlab {
                   const EdgeData& edata) {
       typedef typename base_type::edge_buffer_record edge_buffer_record;
       const procid_t owning_proc = base_type::edge_decision.edge_to_proc_random(source, target, base_type::rpc.numprocs());
+      const edge_buffer_record record(source, target, edata);
+      base_type::edge_exchange.send(owning_proc, record);
+    } // end of add edge
+
+    void add_edge_and_partid(vertex_id_type source, vertex_id_type target,size_t partid,
+                  const EdgeData& edata) {
+      typedef typename base_type::edge_buffer_record edge_buffer_record;
+      const procid_t owning_proc = static_cast<procid_t>(partid);
       const edge_buffer_record record(source, target, edata);
       base_type::edge_exchange.send(owning_proc, record);
     } // end of add edge

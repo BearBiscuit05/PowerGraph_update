@@ -31,6 +31,7 @@
 #include <graphlab/util/hopscotch_map.hpp>
 #include <graphlab/rpc/buffered_exchange.hpp>
 #include <graphlab/macros_def.hpp>
+#include <iostream>
 namespace graphlab {
 
   /**
@@ -128,6 +129,18 @@ namespace graphlab {
 
     /** \brief Add an edge to the ingress object. */
     virtual void add_edge(vertex_id_type source, vertex_id_type target,
+                          const EdgeData& edata) {
+      const procid_t owning_proc = 
+        edge_decision.edge_to_proc_random(source, target, rpc.numprocs());
+      const edge_buffer_record record(source, target, edata);
+#ifdef _OPENMP
+      edge_exchange.send(owning_proc, record, omp_get_thread_num());
+#else
+      edge_exchange.send(owning_proc, record);
+#endif
+    } // end of add edge
+
+    virtual void add_edge_and_partid (vertex_id_type source, vertex_id_type target,size_t partid,
                           const EdgeData& edata) {
       const procid_t owning_proc = 
         edge_decision.edge_to_proc_random(source, target, rpc.numprocs());
