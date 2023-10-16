@@ -1,0 +1,29 @@
+--- ./src/c/src/zookeeper.old.c	2020-05-13 23:55:08.505703128 +0800
++++ ./src/c/src/zookeeper.c	2020-05-13 23:17:50.356667000 +0800
+@@ -228,7 +228,7 @@ static void cleanup_bufs(zhandle_t *zh,i
+ 
+ static int disable_conn_permute=0; // permute enabled by default
+ 
+-static __attribute__((unused)) void print_completion_queue(zhandle_t *zh);
++//static __attribute__((unused)) void print_completion_queue(zhandle_t *zh);
+ 
+ static void *SYNCHRONOUS_MARKER = (void*)&SYNCHRONOUS_MARKER;
+ static int isValidPath(const char* path, const int flags);
+@@ -2427,7 +2427,7 @@ int api_epilog(zhandle_t *zh,int rc)
+     return rc;
+ }
+ 
+-static __attribute__((unused)) void print_completion_queue(zhandle_t *zh)
++/*static __attribute__((unused)) void print_completion_queue(zhandle_t *zh)
+ {
+     completion_list_t* cptr;
+ 
+@@ -2445,7 +2445,7 @@ static __attribute__((unused)) void prin
+         cptr=cptr->next;
+     }
+     fprintf(LOGSTREAM,"end\n");
+-}
++}*/
+ 
+ //#ifdef THREADED
+ // IO thread queues session events to be processed by the completion thread

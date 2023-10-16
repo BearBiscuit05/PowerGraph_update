@@ -25,3 +25,7 @@ tags
 *swp
 \.mchg\.mchg
 .ycm_extra_conf*
+**\1graph
+**\**.log\
+**\**.tar.gz
+**\**.zip
