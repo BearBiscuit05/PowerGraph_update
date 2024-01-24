@@ -99,5 +99,5 @@ docker network create --driver bridge --subnet 43.0.0.0/16 --gateway 43.0.0.1 pg
 在docker集群搭建完成后，进入任意容器，并进入PG程序运行的目录下，随后运行
 
 ```text
-mpiexec --allow-run-as-root -n 2 -hostfile /root/data/machines ./pagerank --graph_opts="ingress=ra
+mpiexec --allow-run-as-root -n 2 -hostfile /root/data/machines ./pagerank --graph_opts="ingress=random" --graph /root/data/test.edges --format self_tsv
 ```
